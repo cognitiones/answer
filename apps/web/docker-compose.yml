@@ -1,0 +1,16 @@
+version: "3.9"
+
+networks:
+  next-answer:
+    driver: bridge
+
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: .
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - next-answer

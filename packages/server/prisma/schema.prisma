@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  submissions Submission[]
+}
+
+model Question {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String       @db.Text
+  type        QuestionType
+  explanation String
+  programming Programming?
+  eventloop   Eventloop?
+  prototype   Prototype?
+  submissions Submission[]
+}
+
+model Programming {
+  id          Int      @id @default(autoincrement())
+  question    Question @relation(fields: [questionId], references: [id])
+  questionId  Int      @unique
+  stem        String
+  submitCheck String
+  solution    String
+}
+
+model Eventloop {
+  id            Int      @id @default(autoincrement())
+  question      Question @relation(fields: [questionId], references: [id])
+  questionId    Int      @unique
+  choices       Choice[]
+  correctAnswer String
+}
+
+model Prototype {
+  id            Int      @id @default(autoincrement())
+  question      Question @relation(fields: [questionId], references: [id])
+  questionId    Int      @unique
+  choices       Choice[]
+  correctAnswer String
+}
+
+model Choice {
+  id          Int        @id @default(autoincrement())
+  label       String
+  value       String
+  eventloop   Eventloop  @relation(fields: [eventloopId], references: [id])
+  eventloopId Int
+  Prototype   Prototype? @relation(fields: [prototypeId], references: [id])
+  prototypeId Int?
+}
+
+model Submission {
+  id             Int      @id @default(autoincrement())
+  question       Question @relation(fields: [questionId], references: [id])
+  questionId     Int      @unique
+  user           User     @relation(fields: [userId], references: [id])
+  userId         Int      @unique
+  code           String? // 编程题提交的代码
+  answer         String? // 选择题提交的答案
+  isCorrect      Boolean
+  submissionTime DateTime @default(now())
+}
+
+enum QuestionType {
+  PROGRAMMING
+  EVENTLOOP
+  PROTOTYPE
+}
