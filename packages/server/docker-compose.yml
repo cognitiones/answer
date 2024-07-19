@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  mysql-container:
+  answer-mysql-container:
     image: mysql
     volumes:
       - ../../../answer-data/mysql-data:/var/lib/mysql
@@ -24,7 +24,7 @@ services:
       context: ./
       dockerfile: ./Dockerfile
     depends_on:
-      mysql-container:
+      answer-mysql-container:
         condition: service_healthy # 增加健康检查
     restart: always
     ports:
@@ -32,7 +32,7 @@ services:
     networks:
       - common-network
     environment:
-      DATABASE_URL: mysql://root:chen@mysql-container:3307/answer
+      DATABASE_URL: mysql://root:chen@answer-mysql-container:3307/answer
 
 networks:
   common-network:
