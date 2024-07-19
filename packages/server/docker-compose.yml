@@ -12,14 +12,14 @@ services:
     networks:
       - common-network
     ports:
-      - 3307:3307
+      - 3306:3306
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 10
 
-  nest-app:
+  answer-nest-app:
     build:
       context: ./
       dockerfile: ./Dockerfile
@@ -32,7 +32,7 @@ services:
     networks:
       - common-network
     environment:
-      DATABASE_URL: mysql://root:chen@answer-mysql-container:3307/answer
+      DATABASE_URL: mysql://root:chen@answer-mysql-container:3306/answer
 
 networks:
   common-network:
